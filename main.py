@@ -29,7 +29,7 @@ def main():
     # Create portfolio
     portfolio = create_portfolio(
         ["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
-        datetime.datetime(2004, 1, 1),
+        datetime.datetime(2010, 1, 1),
         datetime.datetime(2021, 12, 31),
         1000,
         verbose=True,
