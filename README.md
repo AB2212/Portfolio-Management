@@ -1,7 +1,8 @@
 # Portfolio Optimization
 One stop solution for managing and optimizing your portfolio
 
-### Example code
+### Example
+
 ```python
 portfolio = create_portfolio(
     tickers=["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
@@ -11,7 +12,6 @@ portfolio = create_portfolio(
     verbose=True,
 )
 
-# Print portfolio
 print(f"Portfolio: \n{portfolio}")
 ```
     Allocation Proportion: {'GOOGL': 0.0, 'AAPL': 0.49171, 'AMZN': 0.20015, 'FB': 0.12968, 'NFLX': 0.17846}
