@@ -1,4 +1,4 @@
-# Portfolio Optimization
+# Portfolio Management
 One stop solution for managing and optimizing your portfolio
 
 ### Example
