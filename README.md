@@ -2,20 +2,18 @@
 One stop solution for managing and optimizing your portfolio
 
 ### Example code
-    ```python
-    portfolio = create_portfolio(
-        tickers=["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
-        start_date=datetime.datetime(2010, 1, 1),
-        end_date=datetime.datetime(2021, 12, 31),
-        budget=1000,
-        verbose=True,
-    )
+```python
+portfolio = create_portfolio(
+    tickers=["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
+    start_date=datetime.datetime(2010, 1, 1),
+    end_date=datetime.datetime(2021, 12, 31),
+    budget=1000,
+    verbose=True,
+)
 
-    # Print portfolio
-    print(f"Portfolio: \n{portfolio}")
-    ```
-
-    ##### Output #####
+# Print portfolio
+print(f"Portfolio: \n{portfolio}")
+```
     Allocation Proportion: {'GOOGL': 0.0, 'AAPL': 0.49171, 'AMZN': 0.20015, 'FB': 0.12968, 'NFLX': 0.17846}
     Discrete allocation: {'AAPL': 3, 'NFLX': 1, 'FB': 1}
     Funds remaining: $155.07
