@@ -1,17 +1,16 @@
+from dataclasses import dataclass, field
 import numpy as np
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Optional
 import pandas as pd
 from pypfopt.discrete_allocation import DiscreteAllocation
 
 
+@dataclass(frozen=True)
 class Allocation:
-    def __init__(
-        self, ticker: str, quantity: float, amount: float, tags: Set[str] = None
-    ):
-        self.ticker = ticker
-        self.quantity = quantity
-        self.amount = amount
-        self.tags = tags
+    ticker: str
+    quantity: float
+    amount: float
+    tags: Optional[Set[str]] = field(default_factory=set)
 
     def __add__(self, other: "Allocation"):
         assert self.ticker == other.ticker, "Ticker must be the same"
@@ -24,9 +23,6 @@ class Allocation:
         return Allocation(
             self.ticker, self.quantity - other.quantity, self.amount - other.amount
         )
-
-    def __str__(self):
-        return f"{self.ticker} {self.quantity} {self.amount}"
 
 
 class Portfolio:
