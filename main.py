@@ -28,15 +28,15 @@ def main():
     """Main"""
     # Create portfolio
     portfolio = create_portfolio(
-        ["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
-        datetime.datetime(2010, 1, 1),
-        datetime.datetime(2021, 12, 31),
-        1000,
+        tickers=["GOOGL", "AAPL", "AMZN", "FB", "NFLX"],
+        start_date=datetime.datetime(2010, 1, 1),
+        end_date=datetime.datetime(2021, 12, 31),
+        budget=1000,
         verbose=True,
     )
 
     # Print portfolio
-    print(portfolio)
+    print(f"Portfolio: \n{portfolio}")
 
 
 if __name__ == "__main__":

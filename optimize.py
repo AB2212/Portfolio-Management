@@ -22,7 +22,7 @@ class Optimize:
         weights = ef.max_sharpe()
         cleaned_weights = dict(ef.clean_weights())
         if self.verbose:
-            print(cleaned_weights)
+            print(f"Allocation Proportion: {cleaned_weights}")
         return cleaned_weights
 
     def run(self, data):
