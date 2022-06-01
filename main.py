@@ -1,8 +1,10 @@
+import datetime
+
+import matplotlib.pyplot as plt
+
 from fetch_data import DataFetcher
 from optimize import Optimize
 from portfolio import Portfolio
-import datetime
-import matplotlib.pyplot as plt
 
 
 def create_portfolio(tickers, start_date, end_date, budget, *args, **kwargs):
@@ -17,9 +19,11 @@ def create_portfolio(tickers, start_date, end_date, budget, *args, **kwargs):
     weights = optimize.run(data)
 
     # Create portfolio
-    portfolio = Portfolio()
+    portfolio = Portfolio("FAANG")
     latest_prices = fetcher.get_latest_price(tickers)
     portfolio.add_allocation(tickers, weights, latest_prices, budget, verbose)
+
+    portfolio.save()
 
     return portfolio
 

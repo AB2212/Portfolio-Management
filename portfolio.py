@@ -1,10 +1,16 @@
+import datetime
+import os
+import sys
+import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
-import datetime
+from typing import Dict, List, Optional, Set
+
 import numpy as np
-from typing import List, Dict, Set, Optional
 import pandas as pd
 from pypfopt.discrete_allocation import DiscreteAllocation
+
+import utils
 
 
 @dataclass(frozen=True)
@@ -45,8 +51,9 @@ class Allocation:
 class Portfolio:
     """Maintains the portfolio details"""
 
-    def __init__(self):
-
+    def __init__(self, portfolio_name: str):
+        """Initialize portfolio"""
+        self._portfolio_name = portfolio_name
         self._allocations = dict()
         self._allocations_history = defaultdict(list)
         self._net_profit = 0.0
@@ -55,7 +62,7 @@ class Portfolio:
         return len(self._allocations)
 
     def __hash__(self):
-        return hash(str(self))
+        return hash(str(self)) % ((sys.maxsize + 1) * 2)  # Ensures postive hash value
 
     def __str__(self) -> str:
         return "\n".join(
@@ -100,6 +107,14 @@ class Portfolio:
     def net_profit(self) -> float:
         """Get net profit"""
         return self._net_profit
+
+    @property
+    def portfolio_id(self) -> str:
+        return self._portfolio_id
+
+    @property
+    def portfolio_name(self) -> str:
+        return self._portfolio_name
 
     def get_allocation(self, ticker: str) -> float:
         """Get allocation for a ticker"""
@@ -183,13 +198,36 @@ class Portfolio:
             if tags.intersection(allocation.tags)
         ]
 
-    def save_to_storage(self, storage):
-        """Save portfolio to storage"""
-        # TODO: implement storage
-        storage.set_portfolio(self)
+    def _update_id_history(self, id, dirname):
+        """Update id history"""
+        id_history_filepath = os.path.join(dirname, "id_history.pkl")
+        if os.path.exists(id_history_filepath):
+            hash_history = utils.load_object(id_history_filepath)
+            hash_history.append(id)
+            utils.save_object(hash_history, id_history_filepath)
+        else:
+            hash_history = [id]
+            utils.save_object(hash_history, id_history_filepath)
 
-    def load_from_storage(self, storage, hash=None):
-        """Load portfolio from storage"""
-        # TODO: implement storage
-        portfolio = storage.get_portfolio(hash)
-        self._allocations = portfolio._allocations
+    def save(self):
+        """Save portfolio"""
+        dirname = f"./portfolios/{self.portfolio_name}"
+        os.makedirs(dirname, exist_ok=True)
+        id = hash(self)
+        utils.save_object(self, os.path.join(dirname, f"{id}.pkl"))
+        self._update_id_history(id, dirname)
+
+    def load(self, id=None):
+        """Load portfolio"""
+        dirname = "./portfolios/{self.portfolio_name}"
+        id_history_filepath = os.path.join("./portfolios/", "id_history.pkl")
+        if id is None and os.path.exists(id_history_filepath):
+            # Loading latest id
+            ids = utils.load_object(id_history_filepath)
+            if not ids:
+                raise ValueError("No portfolios found")
+            id = ids[-1]
+        filepath = os.path.join(dirname, f"{id}.pkl")
+        if not os.path.exists(filepath):
+            raise ValueError(f"Portfolio with id {id} not found")
+        return utils.load_object(filepath)
