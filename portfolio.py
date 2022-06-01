@@ -1,4 +1,6 @@
+from collections import defaultdict
 from dataclasses import dataclass, field
+import datetime
 import numpy as np
 from typing import List, Dict, Set, Optional
 import pandas as pd
@@ -10,6 +12,7 @@ class Allocation:
     ticker: str
     quantity: float
     amount: float
+    timestamp: datetime.datetime = field(default_factory=datetime.datetime.now)
     tags: Optional[Set[str]] = field(default_factory=set)
 
     def __add__(self, other: "Allocation"):
@@ -24,6 +27,20 @@ class Allocation:
             self.ticker, self.quantity - other.quantity, self.amount - other.amount
         )
 
+    def __mul__(self, other):
+
+        if isinstance(other, int) or isinstance(other, float):
+
+            return Allocation(
+                self.ticker,
+                self.quantity * other,
+                self.amount * other,
+                datetime.datetime.now(),
+                self.tags,
+            )
+        else:
+            raise TypeError("Multiplication not supported")
+
 
 class Portfolio:
     """Maintains the portfolio details"""
@@ -31,6 +48,8 @@ class Portfolio:
     def __init__(self):
 
         self._allocations = dict()
+        self._allocations_history = defaultdict(list)
+        self._net_profit = 0.0
 
     def __len__(self):
         return len(self._allocations)
@@ -47,23 +66,40 @@ class Portfolio:
         )
 
     def _add_allocation(self, ticker: str, allocation: Allocation):
-
         """Add allocation for a ticker"""
-        if ticker not in self._allocations:
-            self._allocations[ticker] = allocation
-        else:
+        self._allocations_history[ticker].append(allocation)
+        if ticker in self._allocations:
             self._allocations[ticker] += allocation
+        else:
+            self._allocations[ticker] = allocation
 
-    def _remove_allocation(self, ticker: str, allocation: Allocation):
-        """Remove allocation for a ticker"""
-        self._allocations[ticker] -= allocation
-        if self._allocations[ticker].quantity == 0:
-            del self._allocations[ticker]
+    def _sub_allocation(self, ticker: str, allocation: Allocation):
+        """Subtract allocation for a ticker"""
+        curr_amount = 0
+        self._allocations_history[ticker].append(allocation)
+        if ticker in self._allocations:
+            curr_amount = self._allocations[ticker].amount
+            self._allocations[ticker] -= allocation
+        else:
+            # Short position
+            self._allocations[ticker] = -allocation
+
+        self._net_profit += allocation.amount - curr_amount
+
+    def _delete_allocation(self, ticker: str):
+        """Delete allocation for a ticker"""
+        del self._allocations[ticker]
+        del self._allocations_history[ticker]
 
     @property
     def allocations(self) -> Dict[str, Allocation]:
         """Get all allocations"""
         return self._allocations
+
+    @property
+    def net_profit(self) -> float:
+        """Get net profit"""
+        return self._net_profit
 
     def get_allocation(self, ticker: str) -> float:
         """Get allocation for a ticker"""
@@ -157,4 +193,3 @@ class Portfolio:
         # TODO: implement storage
         portfolio = storage.get_portfolio(hash)
         self._allocations = portfolio._allocations
-        self._hash = portfolio._hash
