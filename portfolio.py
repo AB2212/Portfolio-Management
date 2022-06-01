@@ -109,10 +109,6 @@ class Portfolio:
         return self._net_profit
 
     @property
-    def portfolio_id(self) -> str:
-        return self._portfolio_id
-
-    @property
     def portfolio_name(self) -> str:
         return self._portfolio_name
 
@@ -219,7 +215,7 @@ class Portfolio:
 
     def load(self, id=None):
         """Load portfolio"""
-        dirname = "./portfolios/{self.portfolio_name}"
+        dirname = f"./portfolios/{self.portfolio_name}"
         id_history_filepath = os.path.join("./portfolios/", "id_history.pkl")
         if id is None and os.path.exists(id_history_filepath):
             # Loading latest id
