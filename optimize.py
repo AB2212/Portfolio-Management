@@ -5,7 +5,7 @@ from pypfopt.expected_returns import mean_historical_return
 from pypfopt.risk_models import CovarianceShrinkage
 
 
-class Optimize:
+class OptimizePortfolio:
     """Optimize portfolio"""
 
     # TODO: Add more methods
@@ -27,4 +27,7 @@ class Optimize:
 
     def run(self, data):
         """Run"""
-        return self._max_sharpe_ratio(data)
+        if self.method == "max_sharpe_ratio":
+            return self._max_sharpe_ratio(data)
+        else:
+            raise ValueError(f"Invalid optimization method: {self.method}")

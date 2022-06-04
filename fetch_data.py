@@ -1,10 +1,10 @@
-import pandas as pd
 import datetime
-
-import requests_cache
-import data_api
-
 from typing import List, Tuple
+
+import pandas as pd
+import requests_cache
+
+import data_api
 
 
 class DataFetcher:
@@ -47,7 +47,7 @@ class DataFetcher:
         else:
             raise ValueError("Invalid source name")
 
-    def _parse_ticker(self, ticker: str) -> Tuple[str]:
+    def _parse_ticker(self, ticker: str) -> Tuple[str, str]:
         """Parse ticker string"""
         if ":" in ticker:
             source, ticker = ticker.split(":")
